@@ -2,6 +2,7 @@ package formstack
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type Form struct {
@@ -43,7 +44,7 @@ type Form struct {
 
 func GetForms(fo FormstackOptions) ([]Form, error) {
 	path := "/form.json"
-
+	fmt.Println(fo)
 	res, err := clientDo(fo, "GET", path, nil)
 
 	if err != nil {

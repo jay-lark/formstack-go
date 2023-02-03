@@ -33,8 +33,9 @@ func constructUrl(path string) string {
 func clientDo(fo FormstackOptions, method string, path string, body []byte) (*http.Response, error) {
 	client := &http.Client{}
 	req, _ := http.NewRequest(method, constructUrl(path), bytes.NewReader(body))
-
+	fmt.Println(req)
 	generateHeaders(fo, req)
+	fmt.Println(req)
 	res, err := client.Do(req)
 
 	if err != nil {
