@@ -130,8 +130,8 @@ func GetForms(fo FormstackOptions) ([]Form, error) {
 
 }
 
-func GetFormById(fo FormstackOptions) ([]FormId, error) {
-	path := fmt.Sprintf("/form/%s.json")
+func GetFormById(fo FormstackOptions, id string) ([]FormId, error) {
+	path := fmt.Sprintf("/form/%s.json", id)
 	res, err := clientDo(fo, "GET", path, nil)
 
 	if err != nil {
