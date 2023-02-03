@@ -2,7 +2,6 @@ package formstack
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type Form struct {
@@ -42,8 +41,8 @@ type Form struct {
 	CanEdit                         bool        `json:"can_edit"`
 }
 
-func GetForms(fo FormstackOptions) (*Form, error) {
-	path := fmt.Sprintf("/form.json")
+func GetForms(fo FormstackOptions) ([]Form, error) {
+	path := "/form.json"
 
 	res, err := clientDo(fo, "GET", path, nil)
 
@@ -52,16 +51,15 @@ func GetForms(fo FormstackOptions) (*Form, error) {
 	}
 
 	defer res.Body.Close()
-	var frm Form
-	json.NewDecoder(res.Body).Decode(&frm)
-
-	forms := &Form{
-		ID:          frm.ID,
-		Name:        frm.Name,
-		URL:         frm.URL,
-		Submissions: frm.Submissions,
+	forms := map[string]json.RawMessage{}
+	err = json.NewDecoder(res.Body).Decode(&forms)
+	if err != nil {
+		return nil, err
 	}
 
-	return forms, nil
+	var frm []Form
+	json.Unmarshal(forms["forms"], &frm)
+
+	return frm, nil
 
 }
