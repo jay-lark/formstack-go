@@ -131,7 +131,7 @@ func GetForms(fo FormstackOptions) ([]Form, error) {
 }
 
 func GetFormById(fo FormstackOptions, id string) ([]FormId, error) {
-	path := fmt.Sprintf("/form/%s.json", id)
+	path := fmt.Sprintf("/form/%s.json")
 	res, err := clientDo(fo, "GET", path, nil)
 
 	if err != nil {
@@ -139,14 +139,14 @@ func GetFormById(fo FormstackOptions, id string) ([]FormId, error) {
 	}
 
 	defer res.Body.Close()
-	form := map[string]json.RawMessage{}
+	form := json.RawMessage{}
 	err = json.NewDecoder(res.Body).Decode(&form)
 	if err != nil {
 		return nil, err
 	}
 
 	var frm []FormId
-	json.Unmarshal(form["form"], &frm)
+	json.Unmarshal(form, &frm)
 
 	return frm, nil
 
