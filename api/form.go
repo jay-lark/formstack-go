@@ -3,6 +3,9 @@ package formstack
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strings"
 )
 
 type Form struct {
@@ -161,7 +164,7 @@ func NewForm(fo FormstackOptions, name string) {
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
-	req.Header.Add("authorization", "Bearer e37f25b2600a521ed38a7d3f40b2559d")
+	req.Header.Add("authorization", "Bearer xxx")
 
 	res, _ := http.DefaultClient.Do(req)
 
