@@ -77,35 +77,37 @@ type FormId struct {
 	CanEdit                         bool        `json:"can_edit"`
 	Javascript                      string      `json:"javascript"`
 	HTML                            string      `json:"html"`
-	Fields                          []struct {
-		ID                    string      `json:"id"`
-		Label                 string      `json:"label"`
-		HideLabel             string      `json:"hide_label"`
-		Description           string      `json:"description"`
-		Name                  string      `json:"name"`
-		Type                  string      `json:"type"`
-		Options               string      `json:"options"`
-		Required              string      `json:"required"`
-		Uniq                  string      `json:"uniq"`
-		Hidden                string      `json:"hidden"`
-		Readonly              string      `json:"readonly"`
-		Colspan               string      `json:"colspan"`
-		Sort                  string      `json:"sort"`
-		Logic                 interface{} `json:"logic"`
-		Calculation           string      `json:"calculation"`
-		WorkflowAccess        string      `json:"workflow_access"`
-		Default               string      `json:"default"`
-		ShowPrefix            int         `json:"show_prefix"`
-		ShowMiddle            int         `json:"show_middle"`
-		ShowInitial           int         `json:"show_initial"`
-		ShowSuffix            int         `json:"show_suffix"`
-		TextSize              int         `json:"text_size"`
-		MiddleInitialOptional int         `json:"middle_initial_optional"`
-		MiddleNameOptional    int         `json:"middle_name_optional"`
-		PrefixOptional        int         `json:"prefix_optional"`
-		SuffixOptional        int         `json:"suffix_optional"`
-		VisibleSubfields      []string    `json:"visible_subfields"`
-	} `json:"fields"`
+	Fields                          FormFields
+}
+
+type FormFields struct {
+	ID                    string      `json:"id"`
+	Label                 string      `json:"label"`
+	HideLabel             string      `json:"hide_label"`
+	Description           string      `json:"description"`
+	Name                  string      `json:"name"`
+	Type                  string      `json:"type"`
+	Options               string      `json:"options"`
+	Required              string      `json:"required"`
+	Uniq                  string      `json:"uniq"`
+	Hidden                string      `json:"hidden"`
+	Readonly              string      `json:"readonly"`
+	Colspan               string      `json:"colspan"`
+	Sort                  string      `json:"sort"`
+	Logic                 interface{} `json:"logic"`
+	Calculation           string      `json:"calculation"`
+	WorkflowAccess        string      `json:"workflow_access"`
+	Default               string      `json:"default"`
+	ShowPrefix            int         `json:"show_prefix"`
+	ShowMiddle            int         `json:"show_middle"`
+	ShowInitial           int         `json:"show_initial"`
+	ShowSuffix            int         `json:"show_suffix"`
+	TextSize              int         `json:"text_size"`
+	MiddleInitialOptional int         `json:"middle_initial_optional"`
+	MiddleNameOptional    int         `json:"middle_name_optional"`
+	PrefixOptional        int         `json:"prefix_optional"`
+	SuffixOptional        int         `json:"suffix_optional"`
+	VisibleSubfields      []string    `json:"visible_subfields"`
 }
 
 func GetForms(fo FormstackOptions) ([]Form, error) {
@@ -142,11 +144,30 @@ func GetFormById(fo FormstackOptions, id string) (*FormId, error) {
 	var form FormId
 	json.NewDecoder(res.Body).Decode(&form)
 	frm := &FormId{
-		ID:         form.ID,
-		Name:       form.Name,
-		NumColumns: form.NumColumns,
+		ID:   form.ID,
+		Name: form.Name,
 	}
 
 	return frm, nil
 
+}
+
+func NewForm(fo FormstackOptions, name string) {
+	url := "https://www.formstack.com/api/v2/form.json"
+
+	payload := strings.NewReader("{\"db\":false,\"label_position\":\"top\",\"submit_button_title\":\"Submit Form\",\"use_ssl\":false,\"timezone\":\"US/Eastern\",\"language\":\"en\",\"active\":false,\"name\":name}")
+
+	req, _ := http.NewRequest("POST", url, payload)
+
+	req.Header.Add("accept", "application/json")
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("authorization", "Bearer e37f25b2600a521ed38a7d3f40b2559d")
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(res)
+	fmt.Println(string(body))
 }
